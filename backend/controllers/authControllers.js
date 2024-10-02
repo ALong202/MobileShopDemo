@@ -108,14 +108,7 @@ export const forgotPassword = catchAsyncErrors(async (req, res, next) => {
 
   // Tạo URL để người dùng có thể đặt lại mật khẩu
   // const resetUrl = `${process.env.FRONTEND_URL}/api/password/reset/${resetToken}`;
-  // const resetUrl = `${process.env.FRONTEND_URL}/password/reset/${resetToken}`;
-  let resetUrl;
-  if (process.env.NODE_ENV !== "PRODUCTION") {
-    resetUrl = `${process.env.FRONTEND_URL}/password/reset/${resetToken}`;
-  } else {
-    resetUrl = `${process.env.FRONTEND_PROD_URL}/password/reset/${resetToken}`;
-  }
-  
+  const resetUrl = `${process.env.FRONTEND_URL}/password/reset/${resetToken}`;
    // Tạo nội dung email chứa liên kết đặt lại mật khẩu
   const message = getResetPasswordTemplate(user?.name, resetUrl);
 
@@ -151,7 +144,7 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findOne({
     resetPasswordToken,
     resetPasswordExpire: { $gt: Date.now() },
-  }).select("+password"); // Ensure password field is included
+  });
   // Kiểm tra xem người dùng có tồn tại không
   if (!user) {
     return next(
@@ -161,18 +154,9 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
       )
     );
   }
-
   // Kiểm tra xem mật khẩu mới và xác nhận mật khẩu có khớp nhau không
   if (req.body.password !== req.body.confirmPassword) {
     return next(new ErrorHandler("Mật khẩu không khớp", 400));
-  }
-
-  
-  console.log("req:", req.body);
-  // Kiểm tra xem mật khẩu mới có trùng với mật khẩu cũ không
-  const isSamePassword = await user.comparePassword(req.body.password);
-  if (isSamePassword) {
-    return next(new ErrorHandler("Mật khẩu mới không được trùng với mật khẩu cũ", 400));
   }
 
   // Cập nhật mật khẩu mới cho người dùng
@@ -277,8 +261,6 @@ export const updateUser = catchAsyncErrors(async (req, res, next) => {
   const newUserData = {
     name: req.body.name,
     email: req.body.email,
-    phone: req.body.phone,
-    address: req.body.address,
     role: req.body.role,
   };
 
@@ -305,12 +287,6 @@ export const deleteUser = catchAsyncErrors(async (req, res, next) => {
       new ErrorHandler(`Không tìm thấy người dùng với id: ${req.params.id}`, 404)
     );
   }
-
-  // Xoá avatar khỏi cloudinary
-  if (user?.avatar?.public_id) {
-    await delete_file(user?.avatar?.public_id);
-  }
-
   // Xóa người dùng khỏi cơ sở dữ liệu
   await user.deleteOne();
 

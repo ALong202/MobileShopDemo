@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 const orderSchema = new mongoose.Schema(
   {
     shippingInfo: {
-      //Quốc: Về cơ bản ko cần lưu thêm orderID tại đây, dùng _id mongo tạo ra là đủ-> xem xét bỏ, nếu bỏ thì báo để e adjust code!!!
       orderID: {
       type: String, //Quốc: e tạm thời đổi number sang string để tiện tạo orderID bên frontend, nếu bên a bất tiện và cần đổi thì trao đổi vs e nha. Thks
       required: true,  
@@ -13,26 +12,6 @@ const orderSchema = new mongoose.Schema(
       address: {
         type: String,
         required: true,
-      },
-
-      shippingWard: {
-        type: String,
-        //required: true,
-      },
-
-      shippingCity: {
-        type: String,
-        //required: true,
-      },
-
-      shippingProvince: {
-        type: String,
-        //required: true,
-      },
-
-      shippingVender: {
-        type: String,
-        //required: true,
       },
 
       phoneNo: {
@@ -53,30 +32,11 @@ const orderSchema = new mongoose.Schema(
           type: String,
           required: true,
         },
-        // selectedColor: {
-        //   type: String,
-        // },
-        // selectedSize: {
-        //   type: String,
-        // },
-        selectedVariant: {
-          color: {
-            type: String,
-            required: [true, "Vui lòng nhập màu sản phẩm."],
-            enum: ["Trắng", "Đen", "Đỏ", "Xanh", "Vàng", "Hồng", "Cam", "Xám", "Nâu", "Sọc", "Họa tiết"],
-          },
-          size: {
-            type: String,
-            required: [true, "Vui lòng nhập kích cỡ sản phẩm"],
-            enum: ["S", "M", "L", "F"],
-          },
-          stock: {
-            type: Number,
-            required: [true, "Vui lòng nhập lượng tồn kho sản phẩm"],
-          },
-          variantID: {
-            type: String,
-          },
+        selectedColor: {
+          type: String,
+        },
+        selectedSize: {
+          type: String,
         },
         quantity: {
           type: Number,
@@ -97,28 +57,6 @@ const orderSchema = new mongoose.Schema(
           required: true,
           ref: "Product",
         },
-        reviews: [
-          {
-            order: {
-              type: mongoose.Schema.Types.ObjectId,
-              ref: "Order", // Chỉ active khi project go-live
-              // required: true,  // Chỉ active khi project go-live
-            },
-            user: {
-              type: mongoose.Schema.Types.ObjectId,
-              ref: "User", // Chỉ active khi project go-live
-              // required: true,  // Chỉ active khi project go-live
-            },
-            rating: {
-              type: Number,
-              min:1,
-              max:5,
-            },
-            comment: {
-              type: String,
-            },
-          },
-        ],
       },
     ],
 

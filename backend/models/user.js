@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema(
     
     password: {
       type: String,
-      // required: [true, "Vui lòng nhập mật khẩu của bạn"],
+      required: [true, "Vui lòng nhập mật khẩu của bạn"],
       minLength: [6, "Mật khẩu của bạn phải ít nhất 6 ký tự."],
       select: false,
     },
@@ -46,14 +46,6 @@ const userSchema = new mongoose.Schema(
 
     resetPasswordToken: String,
     resetPasswordExpire: Date,
-    // Phương thức đăng nhập
-    method: {
-      type: String,
-      required: true,
-      default: "local",
-    },
-    googleId: String,
-    facebookId: String,
   },
 
   { timestamps: true }

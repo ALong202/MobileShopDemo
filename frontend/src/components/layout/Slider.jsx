@@ -62,47 +62,29 @@ const Slider = () => {
 
 
   return (
-    <div className="w3-content w3-display-container banner-slider-container" style={{maxWidth: '90%'}}>
+    <div className="w3-content w3-display-container slider-container" style={{maxWidth: '90%'}}>
       {/* <img className="mySlides" src="../images/Slider/saleOff.jpg" />
       <img className="mySlides" src="../images/Slider/freeship-t04.jpg" />
       <img className="mySlides" src="../images/Slider/storeSystem.jpg" /> */}
       <img 
         className="mySlides" 
-        srcset="../images/Slider/saleOff-600w.jpg 768w,
-                ../images/Slider/saleOff-900w.jpg 1280w,
-                ../images/Slider/saleOff-1366w.jpg 1900w,
-                ../images/Slider/saleOff.svg 1920w"
-        sizes="(max-width: 768px) 100vw, 
-              (max-width: 1280px) 100vw, 
-              (max-width: 1900px) 100vw,
-              100vw"
-        src="../images/Slider/saleOff-1366w.jpg" 
+        srcset="../images/Slider/saleOff.jpg 1360w, ../images/Slider/saleOff.svg 1520w"
+        sizes="(max-width: 1366px) 100vw, 100vw"
+        src="../images/Slider/saleOff.jpg" 
         layout="responsive"
       />
       <img 
         className="mySlides" 
-        srcset="../images/Slider/freeship-600w.jpg 768w,
-                ../images/Slider/freeship-900w.jpg 1280w,
-                ../images/Slider/freeship-1366w.jpg 1900w,
-                ../images/Slider/freeship.svg 1920w"
-        sizes="(max-width: 768px) 100vw, 
-              (max-width: 1280px) 100vw, 
-              (max-width: 1900px) 100vw,
-              100vw"
-        src="../images/Slider/freeship-1366w.jpg" 
+        srcset="../images/Slider/freeship-t04.jpg 1360w, ../images/Slider/freeship-t04.svg 1520w"
+        sizes="(max-width: 1366px) 100vw, 100vw"
+        src="../images/Slider/freeship-t04.jpg" 
         layout="responsive"
       />
       <img 
         className="mySlides" 
-        srcset="../images/Slider/storeSystem-600w.jpg 768w, 
-                ../images/Slider/storeSystem-900w.jpg 1280w, 
-                ../images/Slider/storeSystem-1366w.jpg 1900w, 
-                ../images/Slider/storeSystem.svg 1920w"
-        sizes="(max-width: 768px) 100vw, 
-              (max-width: 1280px) 100vw, 
-              (max-width: 1900px) 100vw,
-              100vw"
-        src="../images/Slider/storeSystem-1366w.jpg" 
+        srcset="../images/Slider/storeSystem.jpg 1360w, ../images/Slider/storeSystem.svg 1520w"
+        sizes="(max-width: 1366px) 100vw, 100vw"
+        src="../images/Slider/storeSystem.jpg" 
         layout="responsive"
       />
 

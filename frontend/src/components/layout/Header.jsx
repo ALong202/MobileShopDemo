@@ -9,14 +9,8 @@ import MetaData from "./MetaData";
 import Search from "./Search";
 import { useGetMeQuery } from "../../redux/api/userApi";
 import { useLazyLogoutQuery} from "../../redux/api/authApi";
-import { useGetAddressDataQuery } from "../../redux/api/addressApi";
-import { useEffect } from "react";
 
 const Header = () => {
-  const { data } = useGetAddressDataQuery();
-  useEffect(() => {
-    sessionStorage.setItem("nationData", JSON.stringify(data));
-  }, [data]);
 
   // console.log(data); // Dữ liệu người dùng đăng nhập từ backend
 
@@ -43,14 +37,7 @@ const Header = () => {
         <div className="col-12 col-md-3 ps-5">
           <div className="navbar-brand">
             <a href="/">
-              <img
-                srcset="../images/FashionShop_logo-390w.png 1900w,
-                        ../images/FashionShop_logo.svg 1920w"
-                sizes="(max-width: 1900px) 100vw, 100vw"
-                src="../images/FashionShop_logo-390w.png" 
-                alt="FashionShop Logo" 
-                style={{width: '8rem'}}
-              />
+              <img src="../images/FashionShop_logo.svg" alt="FashionShop Logo" style={{width: '8rem'}}/>
             </a>
           </div>
         </div>
@@ -87,10 +74,8 @@ const Header = () => {
                 <span className="username">{user?.name.split(' ').pop()}</span>
               </button>
               <div className="dropdown-menu w-100" aria-labelledby="dropDownMenuButton">
-                {user?.role === "admin" && (
-                  <Link className="dropdown-item" to="/admin/dashboard"> Dashboard{" "} </Link>
-                )}
-                
+                <Link className="dropdown-item" to="/admin/dashboard"> Dashboard{" "} </Link>
+
                 <Link className="dropdown-item" to="/me/orders"> Đơn hàng{" "} </Link>
 
                 <Link className="dropdown-item" to="/me/profile"> Tài khoản{" "} </Link>

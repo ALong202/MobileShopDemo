@@ -25,7 +25,6 @@ const Login = () => {
   useEffect(() => {
     if(isAuthenticated){
       navigate("/");
-      toast.success("Đăng nhập thành công");
     }
     if(error){
       toast.error(error?.data?.message);
@@ -45,26 +44,11 @@ const Login = () => {
   
   };
 
-  let baseUrl = window.location.origin;
-  if (baseUrl === "http://localhost:3000") {
-    baseUrl = "http://localhost:3001";
-  }
-
-  const handleGoogleLogin = async () => {
-    // window.open("http://localhost:3001/api/auth/google", "_self");
-    window.open(`${baseUrl}/api/auth/google`, "_self");
-  };
-
-  const handleFacebookLogin = async () => {
-    // window.open("http://localhost:3001/api/auth/facebook", "_self");
-    window.open(`${baseUrl}/api/auth/facebook`, "_self");
-  };
-
   return (
     <div className="row wrapper">
       <div className="col-10 col-lg-5">
         <form
-          className="shadow rounded bg-body no-bottom-padding"
+          className="shadow rounded bg-body"
           onSubmit={submitHandler}
           action="your_submit_url_here"
           method="post"
@@ -109,20 +93,6 @@ const Login = () => {
             <a href="/register" className="float-end">Chưa có tài khoản?</a>
           </div>
         </form>
-
-        <div className="shadow rounded bg-body login-wrapper">
-          <p className="text-left">Hoặc đăng nhập bằng:</p>
-          <div className="button-container">
-            <button className="loginButton google" onClick={handleGoogleLogin}>
-              <img src="../images/google.png" alt="google_icon" className="icon" />
-              Google
-            </button>
-            <button className="loginButton facebook" onClick={handleFacebookLogin}>
-              <img src="../images/facebook.png" alt="facebook_icon" className="icon" />
-              Facebook
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   )

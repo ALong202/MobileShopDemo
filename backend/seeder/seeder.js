@@ -14,7 +14,7 @@ const seedProducts = async () => {
         // await mongoose.connect("mongodb://localhost:27017/FashionShop");
 
         // Kết nối tới CSDL MongoDB Atlas
-        await mongoose.connect("mongodb+srv://22540001:123456789a@fashionshop.knbuosh.mongodb.net/FashionShop?retryWrites=true&w=majority&appName=FashionShop")
+        await mongoose.connect("mongodb+srv://22540008:123456789a@fashionshop.knbuosh.mongodb.net/ModernShop?retryWrites=true&w=majority&appName=FashionShop")
 
         // Xóa toàn bộ các bản ghi trong collection Product
         await Product.deleteMany();
