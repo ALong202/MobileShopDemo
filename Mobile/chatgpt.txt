@@ -1,0 +1,829 @@
+tôi muốn xây dựng trang Login và Signup react native expo. dựa vào api và code bên dưới.
+Tôi có code trang login dự án web chung backend với app này, có thể tham khảo và làm lại không
+
+
+//frontend\src\components\auth\Login.jsx react web
+/* component react hiển thị form đăng nhập*/
+import React, { useEffect, useState } from "react"
+import { useLoginMutation } from "../../redux/api/authApi"; // auto chèn khi chọn useLoginMutation từ Quick Fix
+// import toast from "react-hot-toast"; // auto chèn khi chọn toast từ Quick Fix
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom"
+import { useSelector } from "react-redux";
+
+// Component Login gồm 2 biến email và password được khởi tạo bằng useState lưu trữ từ form
+const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const navigate = useNavigate();
+
+  // Hook từ Redux Toolkit Query được sử dụng để request đăng nhập. Trả về 1 mảng chứa hàm login để gửi request về một đối tượng chứa trạng thái của request như isLoading, error, data
+  const [login, { isLoading, error, data }] = useLoginMutation();
+
+  const { isAuthenticated } = useSelector((state) => state.auth);
+  
+  console.log("=====================================");
+  console.log(data);
+  console.log("=====================================");
+  // kiểm tra nếu có lỗi request thì hiển thị thông báo lỗi bằng toast.error
+  useEffect(() => {
+    if(isAuthenticated){
+      navigate("/");
+    }
+    if(error){
+      toast.error(error?.data?.message);
+    }
+  }, [error, isAuthenticated])
+  // xử lý sự kiện submit của form. Sau đó hàm login được gọi với dữ liệu đăng nhập
+  const submitHandler = (e) => {
+    e.preventDefault();
+
+    // Dispatch login'
+    const loginData = {
+      email,
+      password,
+    };
+
+    login(loginData);
+  
+  };
+
+  return (
+    <div className="row wrapper">
+      <div className="col-10 col-lg-5">
+        <form
+          className="shadow rounded bg-body"
+          onSubmit={submitHandler}
+          action="your_submit_url_here"
+          method="post"
+        >
+          <h2 className="mb-4">Đăng nhập</h2>
+          <div className="mb-3">
+            <label htmlFor="email_field" className="form-label">Email</label>
+            <input
+              type="email"
+              id="email_field"
+              className="form-control"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+
+          <div className="mb-3">
+            <label htmlFor="password_field" className="form-label">Mật khẩu</label>
+            <input
+              type="password"
+              id="password_field"
+              className="form-control"
+              name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+
+          <a href="/password/forgot" className="float-end mb-4">Quên Mật khẩu?</a>
+
+          <button 
+            id="login_button" 
+            type="submit" 
+            className="btn w-100 py-2" 
+            disabled={isLoading}
+            >
+            {isLoading? "Đang xác thực..." :"ĐĂNG NHẬP"}
+          </button>
+
+          <div className="my-3">
+            <a href="/register" className="float-end">Chưa có tài khoản?</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
+export default Login
+
+
+\---src
+    |   AppNavigator.js
+    |   
+    +---components
+    |       Filters.js
+    |       ProductItem.js
+    |       Sorters.js
+    |       
+    +---redux
+    |   |   store.js
+    |   |   
+    |   +---api
+    |   |       authApi.js
+    |   |       orderApi.js
+    |   |       productsApi.js
+    |   |       userApi.js
+    |   |       
+    |   \---features
+    |           cartSlice.js
+    |           userSlice.js
+    |           
+    \---screens
+            HomeScreen.js
+            ProductScreen.js
+            CategoriesScreen.js
+            FavouritesScreen.js
+            LoginScreen.js
+            ProfileScreen.js
+            SignupScreen.js
+
+
+--------------------------------------
+
+// src/AppNavigator.js
+import React from 'react';
+import { createStackNavigator } from '@react-navigation/stack';
+import MainTab from './MainTab'; // Import đúng MainTab
+import ProductScreen from '../screens/ProductScreen';
+import LoginScreen from '../screens/LoginScreen';
+import SignUpScreen from '../screens/SignupScreen';
+// Nếu chưa có DrawerNavigation, tạm thời bỏ qua 
+// import DrawerNavigation from './DrawerNavigation';
+
+const Stack = createStackNavigator();
+
+const AppNavigator = () => {
+  return (
+    <Stack.Navigator>
+      {/* MainTab sẽ chứa các tab điều hướng chính */}
+      <Stack.Screen 
+        name="Main" 
+        component={MainTab} 
+        options={{ headerShown: false }} 
+      />
+      {/* Các màn hình khác có thể được điều hướng từ các tab */}
+      <Stack.Screen 
+        name="Product" 
+        component={ProductScreen} 
+        options={{ headerShown: true, title: "Product Details" }} // Thêm tiêu đề sản phẩm
+      />
+       <Stack.Screen 
+        name="Login" 
+        component={LoginScreen} 
+        options={{ headerShown: true, title: "Login Screen" }} // Thêm tiêu đề sản phẩm
+      />     
+       <Stack.Screen 
+        name="SignUp" 
+        component={SignUpScreen} 
+        options={{ headerShown: true, title: "SignUp Screen" }} // Thêm tiêu đề sản phẩm
+      />     
+    </Stack.Navigator>
+  );
+};
+
+export default AppNavigator;
+
+
+--------------------------------------
+
+// src/navigation/HomeStack.js
+import React from 'react';
+import { createStackNavigator } from '@react-navigation/stack';
+import HomeScreen from '../screens/HomeScreen';
+import ProductScreen from '../screens/ProductScreen'; // Đảm bảo import đúng component
+
+const Stack = createStackNavigator();
+
+const HomeStack = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen 
+        name="HomeScreen" 
+        component={HomeScreen} 
+        options={{ headerShown: false }} // Ẩn header trên HomeScreen
+      />
+      <Stack.Screen 
+        name="Product"  // Đổi thành "Product" thay vì "ProductScreen"
+        component={ProductScreen}  // Đảm bảo tham chiếu đúng ProductScreen
+        options={{ 
+          title: 'Product Details',
+          headerBackTitleVisible: false, // Ẩn tiêu đề quay lại
+          headerShown: true // Hiển thị header trên ProductScreen
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+export default HomeStack;
+
+
+--------------------------------------
+
+// src/navigation/MainTab.js
+import React from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import CategoriesScreen from '../screens/CategoriesScreen';
+import FavouritesScreen from '../screens/FavouritesScreen';
+import ProfileScreen from '../screens/ProfileScreen';
+import HomeStack from './HomeStack';
+
+
+const Tab = createBottomTabNavigator();
+
+const MainTab = () => {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+          if (route.name === 'Home') iconName = focused ? 'home' : 'home-outline';
+          else if (route.name === 'Categories') iconName = focused ? 'grid' : 'grid-outline';
+          else if (route.name === 'Favourites') iconName = focused ? 'heart' : 'heart-outline';
+          else if (route.name === 'Profile') iconName = focused ? 'person' : 'person-outline';
+
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: 'blue',
+        tabBarInactiveTintColor: 'gray',
+      })}
+    >
+      <Tab.Screen name="Home" component={HomeStack} options={{ headerShown: false }} />
+      <Tab.Screen name="Categories" component={CategoriesScreen} options={{ headerShown: false }} />
+      <Tab.Screen name="Favourites" component={FavouritesScreen} options={{ tabBarBadge: 3, headerShown: false }} />
+      <Tab.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} />
+    </Tab.Navigator>
+  );
+};
+
+export default MainTab;
+
+
+--------------------------------------
+
+// /src\redux\api\authApi.js
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { userApi } from './userApi';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Thay vì localStorage
+
+export const authApi = createApi({
+  reducerPath: "authApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: "http://192.168.1.5:3001/api",  // Điều chỉnh URL cho React Native
+    prepareHeaders: async (headers) => {
+      const token = await AsyncStorage.getItem('token');
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
+  keepUnusedDataFor: 86400,
+  endpoints: (builder) => ({
+    register: builder.mutation({
+      query(body) {
+        return {
+          url: "/register",
+          method: "POST",
+          body,
+        };
+      },
+      async onQueryStarted(args, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          await AsyncStorage.setItem('token', data.token); // Lưu token vào AsyncStorage
+          await dispatch(userApi.endpoints.getMe.initiate(null));
+        } catch (error) {
+          console.log(error);
+        }
+      },
+    }),
+    login: builder.mutation({
+      query(body) {
+        return {
+          url: "/login",
+          method: "POST",
+          body,
+        };
+      },
+      async onQueryStarted(args, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          await AsyncStorage.setItem('token', data.token); // Lưu token vào AsyncStorage
+          await dispatch(userApi.endpoints.getMe.initiate(null));
+        } catch (error) {
+          console.log(error);
+        }
+      },
+    }),
+    logout: builder.query({
+      query: () => "/logout",
+      async onQueryStarted(args, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          await AsyncStorage.removeItem('token'); // Xóa token khỏi AsyncStorage khi logout
+        } catch (error) {
+          console.log(error);
+        }
+      },
+    }),
+  }),
+});
+
+// Export các hooks
+export const { useLoginMutation, useRegisterMutation, useLazyLogoutQuery } = authApi;
+
+
+--------------------------------------
+
+//src\redux\api\orderApi.js
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage cho token
+
+export const orderApi = createApi({
+  reducerPath: "orderApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: "http://192.168.1.5:3001/api",  // Điều chỉnh baseUrl cho React Native
+    // Chuẩn bị headers cho các request, bao gồm cả token từ AsyncStorage
+    prepareHeaders: async (headers) => {
+      const token = await AsyncStorage.getItem('token');
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
+  endpoints: (builder) => ({
+    createNewOrder: builder.mutation({
+      query(body) {
+        return {
+          url: "/orders/new",
+          method: "POST",
+          body,
+        };
+      },
+    }),
+    myOrders: builder.query({
+      query: () => ({
+        url: `/me/orders`,
+      }),
+    }),
+    orderDetails: builder.query({
+      query: (id) => ({
+        url: `/orders/${id}`,
+      }),
+    }),
+  }),
+});
+
+// Export các hooks để sử dụng trong các component
+export const { useCreateNewOrderMutation, useMyOrdersQuery, useOrderDetailsQuery } = orderApi;
+
+
+--------------------------------------
+
+//src\redux\api\productsApi.js
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage cho token
+
+export const productApi = createApi({
+  reducerPath: "productApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: "http://192.168.1.5:3001/api", // Cập nhật baseUrl cho React Native
+    prepareHeaders: async (headers) => {
+      const token = await AsyncStorage.getItem('token'); // Lấy token từ AsyncStorage
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
+  tagTypes: ["Product"],
+  keepUnusedDataFor: 86400, // Giữ cache trong 1 ngày
+  endpoints: (builder) => ({
+    getProducts: builder.query({
+      query: (params) => ({
+        url: "/products",
+        params: {
+          page: params?.page,
+          keyword: params?.keyword,
+          category: params?.category,
+          subCategory: params?.subCategory,
+          subSubCategory: params?.subSubCategory,
+          sort: params?.sort,
+          "price[gte]": params?.min,
+          "price[lte]": params?.max,
+        },
+      }),
+    }),
+    getProductDetails: builder.query({
+      query: (id) => `/products/${id}`,
+      providesTags: ['Product'],
+    }),
+    submitReview: builder.mutation({
+      query(body) {
+        return {
+          url: "/reviews",
+          method: "PUT",
+          body,
+        };
+      },
+      invalidatesTags: ["Product"],
+    }),
+    canUserReview: builder.query({
+      query: (productId) => `/can_review/?productId=${productId}`,
+    }),
+  }),
+});
+
+// Export các hooks để sử dụng trong các component React Native
+export const { 
+  useGetProductsQuery, 
+  useGetProductDetailsQuery, 
+  useSubmitReviewMutation, 
+  useCanUserReviewQuery 
+} = productApi;
+
+
+--------------------------------------
+
+//src\redux\api\userApi.js
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { setIsAuthenticated, setLoading, setUser } from '../features/userSlice';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage để lấy token
+
+export const userApi = createApi({
+  reducerPath: "userApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: "http://192.168.1.5:3001/api", // Cập nhật baseUrl cho React Native
+    prepareHeaders: async (headers) => {
+      const token = await AsyncStorage.getItem('token'); // Lấy token từ AsyncStorage
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
+  tagTypes: ["User"], 
+  endpoints: (builder) => ({
+    getMe: builder.query({
+      query: () => ({ url: '/me' }),
+      transformResponse: (result) => result.user,
+      async onQueryStarted(args, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(setUser(data));
+          dispatch(setIsAuthenticated(true));
+          dispatch(setLoading(false));
+        } catch (error) {
+          dispatch(setLoading(false));
+          console.log(error);
+        }
+      },
+      providesTags: ["User"],
+    }),
+    updateProfile: builder.mutation({
+      query: (body) => ({
+        url: "/me/update",
+        method: "PUT",
+        body,
+      }),
+      invalidatesTags: ["User"],
+    }),
+    uploadAvatar: builder.mutation({
+      query: (body) => ({
+        url: "/me/upload_avatar",
+        method: "PUT",
+        body,
+      }),
+      invalidatesTags: ["User"],
+    }),
+    updatePassword: builder.mutation({
+      query: (body) => ({
+        url: "/password/update",
+        method: "PUT",
+        body,
+      }),
+    }),
+    forgotPassword: builder.mutation({
+      query: (body) => ({
+        url: "/password/forgot",
+        method: "POST",
+        body,
+      }),
+    }),
+    resetPassword: builder.mutation({
+      query: ({ token, body }) => ({
+        url: `/password/reset/${token}`,
+        method: "PUT",
+        body,
+      }),
+    }),
+  }),
+});
+
+// Export các hooks để sử dụng trong các component React Native
+export const { 
+  useGetMeQuery, 
+  useUpdateProfileMutation, 
+  useUploadAvatarMutation,
+  useUpdatePasswordMutation,
+  useForgotPasswordMutation,
+  useResetPasswordMutation,
+} = userApi;
+
+
+--------------------------------------
+
+//Mobile\src\components\ProductItem.js
+import React from 'react';
+import { View, Text, Image, StyleSheet } from 'react-native';
+
+const ProductItem = ({ item }) => {
+  // Kiểm tra xem item có chứa thuộc tính images và có ít nhất một hình ảnh
+  const imageUrl = item.images && item.images.length > 0 ? item.images[0].url : null;
+
+  return (
+    <View style={styles.container}>
+      {imageUrl ? (
+        <Image source={{ uri: imageUrl }} style={styles.image} />
+      ) : (
+        <Text>No image available</Text>
+      )}
+      <Text style={styles.name}>{item.name}</Text>
+      <Text style={styles.price}>{item.price.toLocaleString()} VND</Text>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    margin: 5,
+    padding: 10,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  image: {
+    width: '100%',
+    height: 150,
+    resizeMode: 'contain',
+    marginBottom: 10,
+  },
+  name: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  price: {
+    fontSize: 14,
+    color: '#ff4500',
+  },
+});
+
+export default ProductItem;
+
+
+--------------------------------------
+
+//src\redux\features\cartSlice.js
+import { createSlice } from "@reduxjs/toolkit";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
+const initialState = {
+  cartItems: [],
+  shippingInfo: {},
+};
+
+// Function to load data from AsyncStorage
+const loadFromAsyncStorage = async (key) => {
+  try {
+    const value = await AsyncStorage.getItem(key);
+    return value ? JSON.parse(value) : null;
+  } catch (error) {
+    console.log('Error loading data from AsyncStorage:', error);
+    return null;
+  }
+};
+
+// Initial loading of cartItems and shippingInfo from AsyncStorage
+const initializeState = async () => {
+  const cartItems = await loadFromAsyncStorage('cartItems');
+  const shippingInfo = await loadFromAsyncStorage('shippingInfo');
+  return {
+    cartItems: cartItems || [],
+    shippingInfo: shippingInfo || {},
+  };
+};
+
+export const cartSlice = createSlice({
+  name: "cartSlice",
+  initialState,
+  reducers: {
+    setCartItem: (state, action) => {
+      const item = action.payload;
+
+      const isItemExist = state.cartItems.find(
+        (i) => i.product === item.product
+      );
+
+      if (isItemExist) {
+        state.cartItems = state.cartItems.map((i) =>
+          i.product === isItemExist.product ? item : i
+        );
+      } else {
+        state.cartItems = [...state.cartItems, item];
+      }
+
+      // Save updated cartItems to AsyncStorage
+      AsyncStorage.setItem("cartItems", JSON.stringify(state.cartItems));
+    },
+    removeCartItem: (state, action) => {
+      state.cartItems = state?.cartItems?.filter(
+        (i) => i.product !== action.payload
+      );
+
+      // Save updated cartItems to AsyncStorage
+      AsyncStorage.setItem("cartItems", JSON.stringify(state.cartItems));
+    },
+    clearCart: (state) => {
+      state.cartItems = [];
+      AsyncStorage.removeItem("cartItems"); // Remove from AsyncStorage
+    },
+    saveShippingInfo: (state, action) => {
+      state.shippingInfo = action.payload;
+
+      // Save shippingInfo to AsyncStorage
+      AsyncStorage.setItem("shippingInfo", JSON.stringify(state.shippingInfo));
+    },
+  },
+});
+
+export default cartSlice.reducer;
+
+export const { setCartItem, removeCartItem, saveShippingInfo, clearCart } = cartSlice.actions;
+
+
+
+--------------------------------------
+
+//src\redux\features\userSlice.js
+import { createSlice } from "@reduxjs/toolkit";
+
+const initialState = {
+  user: null,
+  isAuthenticated: false,
+  loading: true,
+};
+
+export const userSlice = createSlice({
+  initialState,
+  name: "userSlice",
+  reducers: {
+    setUser(state, action) {
+      state.user = action.payload;
+    },
+    setIsAuthenticated(state, action) {
+      state.isAuthenticated = action.payload;
+    },
+    setLoading(state, action) {
+      state.loading = action.payload;
+    },
+  },
+});
+
+export default userSlice.reducer;
+
+export const { setIsAuthenticated, setUser, setLoading } = userSlice.actions;
+
+
+--------------------------------------
+
+
+//src\redux\store.js
+/* store.js trong Redux Toolkit cấu hình Redux store, lưu trữ toàn bộ trạng thái ứng dụng. */
+import { configureStore } from "@reduxjs/toolkit"; // ref: https://redux-toolkit.js.org/api/configureStore
+import userReducer from "./features/userSlice"; // reducer cho trạng thái người dùng
+import { productApi } from "./api/productsApi"; // API slice cho sản phẩm
+import { authApi } from "./api/authApi"; // API slice cho xác thực
+import { userApi } from "./api/userApi"; // API slice cho người dùng
+import cartReducer from "./features/cartSlice"; // reducer cho giỏ hàng
+import { orderApi } from "./api/orderApi"; // API slice cho đơn hàng
+
+export const store = configureStore({
+  // Dùng Chrome extension Redux DevTools để theo dõi các reducers và trạng thái của ứng dụng
+  reducer: {
+    // Định nghĩa các reducer cho ứng dụng
+    auth: userReducer, // Trạng thái xác thực
+    cart: cartReducer, // Trạng thái giỏ hàng
+    // Các API slices xử lý trạng thái của các yêu cầu API ứng dụng
+    [productApi.reducerPath]: productApi.reducer, // API slice cho sản phẩm
+    [authApi.reducerPath]: authApi.reducer, // API slice cho xác thực
+    [userApi.reducerPath]: userApi.reducer, // API slice cho người dùng
+    [orderApi.reducerPath]: orderApi.reducer, // API slice cho đơn hàng
+  },
+  // ref: https://redux-toolkit.js.org/rtk-query/usage#adding-the-api-middleware
+  // thêm các middleware từ các API slices vào chuỗi middleware mặc định của Redux Toolkit
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat([
+      productApi.middleware, // middleware cho sản phẩm
+      authApi.middleware, // middleware cho xác thực
+      userApi.middleware, // middleware cho người dùng
+      orderApi.middleware, // middleware cho đơn hàng
+    ]),
+});
+
+
+--------------------------------------
+
+// App.js
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { Provider } from 'react-redux';
+import { store } from './src/redux/store.js';
+import AppNavigator from './src/navigation/AppNavigator.js';
+
+export default function App() {
+  return (
+    <Provider store={store}>
+      {/* Giữ NavigationContainer ở đây */}
+      <NavigationContainer>
+        <AppNavigator />
+      </NavigationContainer>
+    </Provider>
+  );
+}
+
+----------------------------------
+
+
+import React, { useEffect } from 'react';
+import { View, FlatList, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { useGetProductsQuery } from '../redux/api/productsApi';
+import Header from '../components/Header';
+import Banner from '../components/Banner';
+import ProductItem from '../components/ProductItem';
+
+const HomeScreen = ({ navigation }) => {
+  const { data, isLoading, error } = useGetProductsQuery();
+
+  const handleProductPress = (product) => {
+    navigation.navigate('Product', { product });
+  };
+
+  return (
+    <View style={styles.container}>
+      <Header navigation={navigation} title="Home" />
+
+      {isLoading ? (
+        <Text>Loading products...</Text>
+      ) : error ? (
+        <Text>Error loading products</Text>
+      ) : (
+        <FlatList
+          ListHeaderComponent={
+            <>
+              <Banner />
+              <View style={styles.hotDealsContainer}>
+                <Text style={styles.hotDealsText}>Hot Deals 🔥</Text>
+              </View>
+            </>
+          }
+          data={data.products}  
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => handleProductPress(item)}>
+              <ProductItem item={item} />
+            </TouchableOpacity>
+          )}
+          keyExtractor={(item) => item._id}  
+          numColumns={2}
+        />
+      )}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  hotDealsContainer: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    backgroundColor: '#ffe4e1',
+  },
+  hotDealsText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#ff4500',
+  },
+});
+
+export default HomeScreen;
+
+

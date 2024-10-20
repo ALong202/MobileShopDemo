@@ -1,0 +1,51 @@
+
+E:\IE307.P11.VB2\DA_DEMO\MODERNSHOP\MOBILE
+|   .gitignore
+|   a.txt
+|   App.js
+|   app.json
+|   babel.config.js
+|   package-lock.json
+|   package.json
+|   readmeM.md
+|      
++---.vscode
+|   \---.react
++---assets
+|   |   adaptive-icon.png
+|   |   FashionShop_logo.svg
+|   |   favicon.ico
+|   |   favicon.png
+|   |   icon.png
+|   |   index.html
+|   |   logo192.png
+|   |   logo512.png
+|   |   manifest.json
+|   |   robots.txt
+|   |   splash.png
+|   |                      
+\---src
+    |   AppNavigator.js
+    |   
+    +---components
+    |       Filters.js
+    |       ProductItem.js
+    |       Sorters.js
+    |       
+    +---redux
+    |   |   store.js
+    |   |   
+    |   +---api
+    |   |       authApi.js
+    |   |       orderApi.js
+    |   |       productsApi.js
+    |   |       userApi.js
+    |   |       
+    |   \---features
+    |           cartSlice.js
+    |           userSlice.js
+    |           
+    \---screens
+            HomeScreen.js
+            ProductScreen.js
+            

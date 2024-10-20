@@ -1,3 +1,4 @@
+//frontend\src\components\layout\Loader.jsx
 /* Dùng để return khi thoả điều kiện để loading: Authenticated */
 import React from "react"
 
